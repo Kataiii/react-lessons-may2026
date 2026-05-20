@@ -1,100 +1,53 @@
 import { useEffect, useState } from "react";
-import Card from "./components/Card";
 import TaskCard from "./components/TaskCard";
 
+// GET - получение данных, нет тела запроса
+// POST - передача данных, создание новых данных на сервере
+// PUT/PATCH - изменение данных, PUT - передаем все данные, PATCH - передаем те данные которые нужно изменить
+// DELETE - удаление данных
+
+// CRUD-операции
+
+// GET
+// 1. Все задачи - массив сущностей /tasks
+// 2. Одна задача - один объект /tasks/1 -> /tasks/:id - параметры (динамический)
+// 3. Query-параметры /tasks?category=джинсы&size=36 - фильтрацию/сортировку
+// 4. Пагинация - номер страницы и количество  эл-тов на странице (стандартная и бесконечная лента)
+
 function App() {
-  const [count, setCount] = useState(0);
-  const [text, setText] = useState('');
-  const [showCard, setShowCard] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Создается компонент (создается переменные, useState) -> Монтирование в Dom-дерево -> вызов useEffect
-
-  // Вызов cleanup-функции -> удаление компонента из DOM-дерева
-
-  useEffect(() => {
-    const tasksLocalStorage = localStorage.getItem('tasks');
-
-    setTimeout(() => {
-      if(!tasksLocalStorage) {
-        // Цепочка then
-        fetch('https://9f71319c30fc7a13.mokky.dev/tasks')
-        .then(res => {
-          if(!res.ok) throw new Error('Произошла ошибка при получении задач');
-          return res.json();
-        })
-        .then(data => {
-          console.log("Данные пришли ", data)
-          setTasks(data)
-        })
-        .catch(error => console.log("Ошибка ",error))
-        }
-        else setTasks(JSON.parse(tasksLocalStorage));
-        setIsLoading(false);
-    }, 2000)
-    
-    // Promise - объект, который хранит своё состояние
-    // pending - ожидание
-    // fullfiled - успешно
-    // rejected - ошибка
-
-    // const response = fetch('https://9f71319c30fc7a13.mokky.dev/tasks');
-    // 1. Цепочка then
-    // 2. async/await
-
-    // const fetchTasks = async () => {
-    //   try {
-    //     const res = await fetch('https://9f71319c30fc7a13.mokky.dev/tasks');
-    //     if(!res.ok) throw new Error('Произошла ошибка при получении задач');
-    //     const data = await res.json();
-    //     setTasks(data);
-    //   } catch (error) {
-    //     console.log("Ошибка ",error)
-    //   }
-    // }
-
-    // //axios
-    // fetchTasks();
-  }, [])
-
-
+  const [limit, setLimit] = useState(3);
+  const [page, SetPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(2);
 
   useEffect(() => {
-    console.log("Задания обновились");
+    handleGetTask();
+  }, [page])
+
+  useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks])
-  // useEffect - без массива зависимостей - неудобный - update
-  // useEffect(() => {
-  //   console.log('Вызываюсь каждый раз, когда что-то обновляется');
-  // })
 
-  // useEffect - с пустым массивом зависимостей - mount (1 раз, в самом начале)
-  // useEffect(() => {
-  //   console.log('Вызываюсь один раз, после того как компонент появится в DOM')
+  const handleGetTask = async () => {
+    setIsLoading(true);
 
-  //   // cleanup-функция - unmount
-  //   return () => {
-  //     console.log('Компонент размонтируется')
-  //   }
-  // }, [])
+    const queryParams = new URLSearchParams();
+    if(page) queryParams.set('page', page);
+    if(limit) queryParams.set('limit', limit);
 
-  // useEffect - с массивом зависимостей - update (каждый раз когда будет обновляться count)
-  // useEffect(() => {
-  //   console.log('Счетчик Вызываюсь, count обновился ',count);
-  // }, [count])
-
-  // // useEffect - с массивом зависимостей - update (каждый раз когда будет обновляться text)
-  // useEffect(() => {
-  //   console.log('Вызываюсь, text обновился ', text);
-  // }, [text])
-
-  // useEffect(() => {
-  //   console.log("Что-то изменилось")
-  // }, [count, text])
-
-  const handleClick = () => {
-    setCount(count+1);
+      // Цепочка then
+      fetch(`https://9f71319c30fc7a13.mokky.dev/tasks?${queryParams.toString()}`)
+      .then(res => {
+          if(!res.ok) throw new Error('Произошла ошибка при получении задач');
+          return res.json();
+      })
+      .then(data => {
+          console.log(data);
+          setTasks(data.items);
+          setIsLoading(false);
+      })
+      .catch(error => console.log("Ошибка ",error))
   }
 
   const handleCheck = (id, value) => {
@@ -107,19 +60,72 @@ function App() {
     setTasks(prev => [...prev.filter(task => task.id !== id), {...task, isDone: value}].sort((a,b) => a.id - b.id))
   } 
 
+  // GET-запрос для одной задачи
+  const handleClick = async (id) => {
+    try {
+      const response = await fetch(`https://9f71319c30fc7a13.mokky.dev/tasks/${id}`);
+      if(!response.ok) throw new Error();
+      const data = await response.json();
+      console.log('Задача ', data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleAddTask = async () => {
+    try {
+      const response = await fetch('https://9f71319c30fc7a13.mokky.dev/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'Новая задача',
+          description: 'Новая задача какая-то',
+          isDone: false
+        })
+      })
+      if(!response.ok) throw new Error();
+      await handleGetTask();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleUpdateTask = async (id) => {
+    try {
+      const response = await fetch(`https://9f71319c30fc7a13.mokky.dev/tasks/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'Это новый заголовок'
+        })
+      })
+      if(!response.ok) throw new Error();
+      await handleGetTask();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleDeleteTask = async (id) => {
+    try {
+      const response = await fetch(`https://9f71319c30fc7a13.mokky.dev/tasks/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if(!response.ok) throw new Error();
+      await handleGetTask();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  if(isLoading) return <p>Подожите, пожалуйста, данные грузятся...</p>;
+
   return <div>
-    {/* <p>Счетчик: {count}</p>
-    <button onClick={handleClick}>Увеличить счетчик</button>
-
-    <p>Текстовое поле</p>
-    <input type='text' placeholder="Введите текст" onChange={(e) => setText(e.target.value)}/>
-
-    <button onClick={() => setShowCard(prev => !prev)}>Кнопка</button>
-    {showCard && <Card index={1} id={1} name={'Карточка'} sells={5000} visitors={500}/>} */}
     <p>Лист задачек</p>
-    {isLoading
-    ? <p>Подожите, пожалуйста, данные грузятся...</p>
-    : <div>
+    <button onClick={handleAddTask}>Добавить задачу</button>
+
+    {<div>
         {!tasks.length //tasks.lenght === 0
         ? <p>Задач нет</p>
         : tasks.map(task => <TaskCard 
@@ -129,25 +135,20 @@ function App() {
           description={task.description} 
           isDone={task.isDone}
           onCheck={handleCheck}
+          onClick={() => handleClick(task.id)}
+          onDelete={() => handleDeleteTask(task.id)}
+          onUpdate={() => handleUpdateTask(task.id)}
         />)}
       </div>
     }
-    
+
+    {[1,2].map(item => <button key={item} onClick={() => SetPage(item)}>{item}</button>)}
   </div>
 }
 
 export default App;
 
-// Если есть todo-list
-// (начальное значение у useState - пустой массив)
-// Добавьте useEffect, который сохраняет массив задач в localStorage при каждом изменении.
-// При монтировании загружайте задачи из localStorage
-// localStorage.setItem('ключ', значение)
-// localStorage.getItem('ключ')
-
-// Создайте компонент MouseTracker, который выводит координаты курсора. Используйте useEffect для подписки на mousemove.
-
-// Создайте компонент DocumentTitleTracker.
-// • Он принимает проп title.
-// • С помощью useEffect обновляет document.title при изменении пропа.
-// • Добавьте console.log в эффект и в cleanup, чтобы увидеть порядок вызовов при изменении пропа и размонтировании.
+// 1. Создать форму для создания задачи
+// 2. Создать форму для обновления задачи
+// 3. Фильтрация задач: все, невыполненные, выполненные
+// 4. Сортировку
