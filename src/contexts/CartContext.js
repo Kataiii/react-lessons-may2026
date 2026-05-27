@@ -3,6 +3,8 @@
 //    которая дает доступ до контекста и функции для работы с ним
 // 3. useContext(Context) - хук, для того чтобы внутри компонента получать значения из контекста
 
+// Если с контекстом сстановится тяжело -> стейт-менеджер (Jotai, Zustand, Mobx, Redux (RTK))
+
 import { createContext, useContext, useState } from "react";
 
 const CartContext = createContext({
