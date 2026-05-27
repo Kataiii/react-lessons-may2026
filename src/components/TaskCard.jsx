@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 const TaskCard = ({id, title, description, isDone, onCheck, onClick, onDelete, onUpdate}) => {
+    const [data, setData] = useState();
+
     return <div style={{display: 'flex', gap: 5, alignItems: 'center'}} onClick={onClick}>
         <div>
         <p>{`№${id} | ${title}`}</p>

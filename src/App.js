@@ -5,6 +5,7 @@ import { TaskPage } from "./pages/TaskPage";
 import { HomePage } from "./pages/HomePage";
 import { AddTask } from "./pages/AddTask";
 import { Layout } from "./components/Layout";
+import {Products} from './pages/Products';
 
 // GET - получение данных, нет тела запроса
 // POST - передача данных, создание новых данных на сервере
@@ -19,10 +20,20 @@ import { Layout } from "./components/Layout";
 // 3. Query-параметры /tasks?category=джинсы&size=36 - фильтрацию/сортировку
 // 4. Пагинация - номер страницы и количество  эл-тов на странице (стандартная и бесконечная лента)
 
+// Глобальное состояние:
+// 1. Корзина
+// 2. Статус авторизации (данные авторизации)
+// 3. Тема приложения
+// 4. Уведомления/тосты
+// 5. Локализация
+
+// Глобальное состояние -> хук useContext
+
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        <Route path="/products" element={<Products/>}/>
         <Route path="/tasks" element={<TaskList />} />
         <Route path="/about" element={<About />} />
         <Route path="/tasks/:id" element={<TaskPage />} />
@@ -39,3 +50,8 @@ export default App;
 // 2. Создать форму для обновления задачи
 // 3. Фильтрация задач: все, невыполненные, выполненные
 // 4. Сортировку
+
+
+// Создать контекст для темы приложения - хранит строку 'light' или 'dark'
+// В компонентах ui получается значение контекста 
+// Кнопка или toggle - меняет тему
