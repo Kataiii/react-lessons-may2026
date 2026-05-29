@@ -26,10 +26,20 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   };
 
+  const toggleRole = () => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const newRole = prev.role === "admin" ? "user" : "admin";
+      const updated = { ...prev, role: newRole };
+      localStorage.setItem("user", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   const isAuth = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuth }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuth, toggleRole }}>
       {children}
     </AuthContext.Provider>
   );

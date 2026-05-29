@@ -8,8 +8,13 @@ import { Layout } from "./components/Layout";
 import { Products } from "./pages/Products";
 import { Login } from "./pages/Login";
 import { AuthLayout } from "./components/AuthLayout";
+import { RoleLayout } from "./components/RoleLayout";
 import { Profile } from "./pages/Profile";
 import { Perfomance } from "./components/Perfomance";
+import { Reports } from "./pages/Reports";
+import { NoAccess } from "./pages/NoAccess";
+import { GuestLayout } from "./components/GuestLayout";
+import { ProductSearch } from "./pages/ProductSearch";
 
 // GET - получение данных, нет тела запроса
 // POST - передача данных, создание новых данных на сервере
@@ -37,8 +42,13 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route path="/login" element={<Login />} />
+        <Route element={<GuestLayout />}>
+          <Route path="login" element={<Login />} />
+        </Route>
+
         <Route path="/products" element={<Products />} />
+        <Route path="/products-search" element={<ProductSearch />} />
+        <Route path="no-access" element={<NoAccess />} />
         <Route path="/about" element={<About />} />
         <Route element={<AuthLayout />}>
           <Route path="profile" element={<Profile />} />
@@ -46,6 +56,9 @@ function App() {
           <Route path="tasks/:id" element={<TaskPage />} />
           <Route path="tasks/add" element={<AddTask />} />
           <Route path="perf" element={<Perfomance />} />
+          <Route element={<RoleLayout allowedRoles={["admin"]} />}>
+            <Route path="reports" element={<Reports />} />
+          </Route>
         </Route>
         <Route path="*" element={<h1>Not found</h1>} />
       </Route>

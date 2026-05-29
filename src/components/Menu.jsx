@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const Menu = () => {
-  const { user, isAuth, logout } = useAuth();
+  const { user, isAuth, logout, toggleRole } = useAuth();
   const navigate = useNavigate();
 
   const { items } = useCart();
@@ -33,10 +33,18 @@ export const Menu = () => {
         <Link to="/about">О нас</Link>
         {isAuth && <Link to="/tasks/add">Добавить задачу</Link>}
         <Link to="/products">Продукты</Link>
+        <Link to="/products-search">Поиск продуктов</Link>
         {!isAuth ? (
           <Link to="/login">Войти</Link>
         ) : (
           <button onClick={handleLogout}>Выйти</button>
+        )}
+        {user?.role === "admin" && <Link to="/reports">Отчёты</Link>}
+
+        {isAuth && (
+          <button onClick={toggleRole}>
+            Сменить роль (сейчас: {user.role})
+          </button>
         )}
       </nav>
       <p>Количество элементов в корзине: {items.length}</p>
