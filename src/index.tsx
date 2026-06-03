@@ -7,7 +7,9 @@ import { BrowserRouter } from "react-router-dom";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLDivElement
+);
 root.render(
   <BrowserRouter>
     <ThemeProvider>
@@ -15,7 +17,7 @@ root.render(
         <App />
       </CartProvider>
     </ThemeProvider>
-  </BrowserRouter>,
+  </BrowserRouter>
 );
 
 // If you want to start measuring performance in your app, pass a function
