@@ -1,33 +1,53 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 // UI -> ThemeContext -> localStorage
 
-const ThemeContext = createContext({theme: 'light'});
+type Theme = "light" | "dark";
+
+type ThemeContextType = {
+  theme: Theme;
+  toogleTheme: VoidFunction;
+  setTheme: (theme: Theme) => void;
+};
+
+type ThemeProviderType = {
+  children: ReactNode;
+};
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export const useTheme = () => {
-    const theme = useContext(ThemeContext);
-    if(!theme) throw new Error("Контекст не подключен");
-    return theme;
-}
+  const theme = useContext(ThemeContext);
+  if (!theme) throw new Error("Контекст не подключен");
+  return theme;
+};
 
-export const ThemeProvider = ({children}) => {
-    const [theme, setTheme] = useState(() => {
-        const themeInStorage = localStorage.getItem('theme');
-        if(themeInStorage) return themeInStorage;
-        return 'light';
-    })
+export const ThemeProvider = ({ children }: ThemeProviderType) => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    const themeInStorage = localStorage.getItem("theme");
+    if (themeInStorage) return themeInStorage as Theme;
+    return "light";
+  });
 
-    useEffect(() => {
-        localStorage.setItem('theme', theme);
-    }, [theme])
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-    const toogleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light')
+  const toogleTheme = () =>
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
-    return <ThemeContext.Provider value={{theme, toogleTheme, setTheme}}>
-        {children}
+  return (
+    <ThemeContext.Provider value={{ theme, toogleTheme, setTheme }}>
+      {children}
     </ThemeContext.Provider>
-}
-
+  );
+};
 
 // JavaScript - интерпретируемый язык (Браузер, nodejs)
 // ECMAScript (ES6, ES5)
@@ -37,7 +57,7 @@ export const ThemeProvider = ({children}) => {
 // number1 = 'qwerty'; // строготипизированные языки выдают ошибку
 
 let x = 5;
-x = "hello";
+// x = "hello";
 // Всего зачислено: undefined руб.
 
 // Проблемы:
@@ -46,8 +66,8 @@ x = "hello";
 // 3. Код не является самодокументируемым (JS-doc)
 
 //Слабая типизация - язык использует неявное приведение типов
-console.log(5 - '3'); // 2   5 - 3 = 2
-console.log(5 + '3'); // 53  (конкатенация)
+// console.log(5 - "3"); // 2   5 - 3 = 2
+console.log(5 + "3"); // 53  (конкатенация)
 
 // Typescript - решает проблемы описанные выше - надстройка над JavaScript
 // Typescript -> делается сборка (typescript компилируется в javascript) -> Проект на Javascript
@@ -83,7 +103,6 @@ console.log(5 + '3'); // 53  (конкатенация)
 
 // Dog dog = new Cat(); //ошибка Java, C#
 
-
 // Объединение
 // type ID = string | number;
 // let id1: ID = 10;
@@ -108,7 +127,7 @@ console.log(5 + '3'); // 53  (конкатенация)
 // Примитивные типы:
 // 1. string
 // 2. number
-// 3. boolean 
+// 3. boolean
 // 4. undefined
 // 5. null
 // 6. Symbol (char)
@@ -132,7 +151,7 @@ console.log(5 + '3'); // 53  (конкатенация)
 // 4. never - пустое множество
 // type Status = 'loading' | 'success' | 'error' | 'default' | 'waiting';
 // function getStatus(status: Status) {
-//     switch(status){ 
+//     switch(status){
 //         case 'loading':
 //         case 'success':
 //         case 'error':
@@ -180,7 +199,6 @@ console.log(5 + '3'); // 53  (конкатенация)
 // Интерфейсы: работают только с объектами, могут объединять поля по одинаковому названию, расширение через extends
 // Типы: работают с любым типом данным (объекты, примитивы), при одинаковом названии выдают ошибку, | и &
 
-
 // Переменных и функций
 // Хуки
 // const [count, setCount] = useState<number | string>();
@@ -209,16 +227,15 @@ console.log(5 + '3'); // 53  (конкатенация)
 // let output3 = identity<Array<number>>([1,2,3]); // работать будет
 
 // Условные типы
-// Сужение типов и type guard (typeof (для притимивных), instanceof (проверка по принадлежности к классу), 
+// Сужение типов и type guard (typeof (для притимивных), instanceof (проверка по принадлежности к классу),
 // in (проверка по полю))
-// keyof 
+// keyof
 // keyof Person - "name" | "age"
 // Mapped types (utility types)
 
-
 // Задания
-// 1. Создать компонент StatusBadge, который принимает пропсы status: 'active' | 'pending' | 'error', text 
+// 1. Создать компонент StatusBadge, который принимает пропсы status: 'active' | 'pending' | 'error', text
 // рендерится цветной бейджик
-// 2. Компонент UserCard принимает пропсы user (объект с набором полей name, email, role: 'admin' | 'user'), 
-// onDelete. Если у пользователя роль = user, то мы кнопку удаления показываем, и если админ, то кнопка 
+// 2. Компонент UserCard принимает пропсы user (объект с набором полей name, email, role: 'admin' | 'user'),
+// onDelete. Если у пользователя роль = user, то мы кнопку удаления показываем, и если админ, то кнопка
 // не показывается

@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Menu } from "./Menu";
 import { useTheme } from "../contexts/ThemeContext";
 
-export const Layout = () => {
+export const Layout: React.FC = () => {
   const { theme } = useTheme();
 
   return (
