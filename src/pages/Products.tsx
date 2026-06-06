@@ -1,5 +1,8 @@
 import { ProductCard } from "../components/ProductCard";
 import { useCart } from "../contexts/CartContext";
+import { selectCartItems } from "../store/selectors/cartSelectors";
+import { addToCart, removeFromCart } from "../store/slices/cartSlice";
+import { useAppDispatch, useAppSelector } from "../store/store";
 
 const products = [
   {
@@ -26,9 +29,11 @@ const products = [
 
 export const Products = () => {
   const { items, addItem, deleteItem } = useCart();
+  const dispatch = useAppDispatch();
+  const itemsInStore = useAppSelector(selectCartItems);
 
   const productInCart = (id: number) => {
-    if (items.find((item) => item.id === id)) return true;
+    if (itemsInStore.find((item) => item.id === id)) return true;
     return false;
   };
 
@@ -40,10 +45,14 @@ export const Products = () => {
           id={product.id}
           name={product.name}
           onAdd={
-            !productInCart(product.id) ? () => addItem(product) : undefined
+            !productInCart(product.id)
+              ? () => dispatch(addToCart(product))
+              : undefined
           }
           onDelete={
-            productInCart(product.id) ? () => deleteItem(product.id) : undefined
+            productInCart(product.id)
+              ? () => dispatch(removeFromCart(product.id))
+              : undefined
           }
         />
       ))}

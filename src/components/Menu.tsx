@@ -1,13 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useCart } from "../contexts/CartContext";
+import { useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAppSelector } from "../store/store";
+import { selectTotalQuantity } from "../store/selectors/cartSelectors";
 
 export const Menu: React.FC = () => {
   const location = useLocation();
   const isActive = location.pathname === "/tasks";
   console.log(isActive);
-  const { items } = useCart();
+  const totalQuanity = useAppSelector(selectTotalQuantity);
   const { theme, toogleTheme } = useTheme();
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export const Menu: React.FC = () => {
         <Link to="/tasks/add">Добавить задачу</Link>
         <Link to="/products">Продукты</Link>
       </nav>
-      <p>Количество элементов в корзине: {items.length}</p>
+      <p>Количество элементов в корзине: {totalQuanity}</p>
       <button onClick={toogleTheme}>
         Включить {theme === "light" ? "темную" : "светлую"} тему
       </button>
