@@ -1,6 +1,7 @@
 import { ProductCard } from "../components/ProductCard";
 import { useCart } from "../contexts/CartContext";
 import { selectCartItems } from "../store/selectors/cartSelectors";
+import { useAddProductMutation, useGetProductByIdQuery, useGetProductsQuery } from "../store/services/productApi";
 import { addToCart, removeFromCart } from "../store/slices/cartSlice";
 import { useAppDispatch, useAppSelector } from "../store/store";
 
@@ -31,6 +32,10 @@ export const Products = () => {
   const { items, addItem, deleteItem } = useCart();
   const dispatch = useAppDispatch();
   const itemsInStore = useAppSelector(selectCartItems);
+
+  const {data: products = [], isLoading: isLoadingProducts, isError, error, isFetching, isSuccess} = useGetProductsQuery();
+  // const {data = [], isLoading, isError, error, isFetching, isSuccess} = useGetProductByIdQuery(2);
+  const addProduct = useAddProductMutation();
 
   const productInCart = (id: number) => {
     if (itemsInStore.find((item) => item.id === id)) return true;
