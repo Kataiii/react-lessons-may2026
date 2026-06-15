@@ -1,0 +1,12 @@
+.test {
+    color: red;
+}
+
+/*
+import "./Test.modele.css" - обычное подключение css
+
+import stylesButtons from './Test.modele.css' - подключение модульного css
+import styles from './Test1.modele.css'
+
+<div className={styles.test}></div>
+*/

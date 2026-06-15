@@ -36,3 +36,101 @@
     transform: rotate(360deg);
   }
 }
+
+
+/*
+
+* { - общие стили для всех элементов
+
+}
+
+p { - только для определенных тегов
+
+}
+
+.class { - только тегам у которых есть этот класс
+
+}
+
+# id { - только тегам у которых есть этот id
+
+}
+
+:hover :: - псевдо -классы -селекторы
+
+style={{}} - inline-стили
+
+.class {
+  color: red !important; - перекрывает любую специфичность
+
+}
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* ширина элемента = внутренний контент + padding + border */
+  /* content-box ширина элемента = внутренний контент*/
+}
+
+button {
+  color: #282c34;
+}
+
+label {
+  color: #282c34;
+}
+
+p {
+  color: #282c34;
+}
+
+/* Глобальные переменные css для цветов, шрифтов и отсупов */
+:root {
+ --primary-color: #3b3ee0;
+ --secondary-color: #4b399b;
+ --text-color: #000;
+ --white-color: #fff;
+
+ --font-size-small: 14px;
+}
+
+button {
+  background-color: var(--primary-color);
+}
+
+/*
+1. Модульный css
+import styles from './Test1.modele.css'
+
+<div className={styles.test}></div>
+
+2. Tailwind
+<div classNames="bg-gray-400 px-6 font-semibold"></div>
+
+3. Препроцессоры (Sass/Scss)
+
+// Scss
+.test {
+  color: red;
+}
+
+// Sass
+.test
+  color: red
+  font-size: 14px
+
+
+4. Styled components (CSS-in-JS)
+
+import styled from 'styled-components';
+
+export const Button = styled.button`
+    color: red;
+    background-color: white; 
+    font-size: fontSize;
+`;
+
+<Button>Привет, я кнопка</Button>
+
+*/
